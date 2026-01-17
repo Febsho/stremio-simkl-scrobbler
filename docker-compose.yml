@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  addon:
+    build: .
+    ports:
+      - "7001:7001"
+    environment:
+      - PORT=7001
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # Pass these from your local .env file or set them here
+      - SIMKL_CLIENT_ID=${SIMKL_CLIENT_ID}
+      - SIMKL_CLIENT_SECRET=${SIMKL_CLIENT_SECRET}
+      - ANILIST_CLIENT_ID=${ANILIST_CLIENT_ID}
+      - ANILIST_CLIENT_SECRET=${ANILIST_CLIENT_SECRET}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - BASE_URL=${BASE_URL:-http://localhost:7001}
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
